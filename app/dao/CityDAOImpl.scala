@@ -41,4 +41,15 @@ class CityDAOImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
   override def deleteCity(cityId: Int): Future[Int] = {
     db.run(cities.filter(_.cityId === cityId).delete)
   }
+
+  override def deleteCitiesByCountry(countryId: Int): Future[Int]= {
+    db.run(cities.filter(_.countryId === countryId).delete)
+  }
+
+  override def deleteCitiesByCountry(countryIds: List[Int])= {
+    for(countryId <- countryIds){
+      db.run(cities.filter(_.countryId === countryId).delete)
+    }
+  }
 }
+

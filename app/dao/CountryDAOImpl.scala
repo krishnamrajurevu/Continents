@@ -40,4 +40,8 @@ class CountryDAOImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   override def deleteCountry(countryId: Int): Future[Int] = {
     db.run(countries.filter(_.countryId === countryId).delete)
   }
+
+  override def deleteCountriesByContinent(continentId: Int):  Future[Int] ={
+    db.run(countries.filter(_.continentId === continentId).delete)
+  }
 }

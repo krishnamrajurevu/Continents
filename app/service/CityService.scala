@@ -20,4 +20,8 @@ trait CityService {
 
   def getCitiesByGroup(): Map[Char, Seq[String]]
 
+  def removeCitiesOfCountry(countryIds: List[Int]): Option[String]
+
+  def removeCitiesOfCountry(countryId: Int): Option[String]
+
 }

@@ -8,7 +8,7 @@ import scala.collection.mutable.ListBuffer
 import scala.concurrent._
 import scala.concurrent.duration._
 
-class CountryServiceImpl @Inject()(countryDAO : CountryDAO, continentDAO : ContinentDAO) extends CountryService {
+class CountryServiceImpl @Inject()(countryDAO : CountryDAO, continentDAO : ContinentDAO,cityService: CityService) extends CountryService {
 
 
   override def getAllCountries(): Future[Seq[Country]] = {
@@ -43,13 +43,34 @@ class CountryServiceImpl @Inject()(countryDAO : CountryDAO, continentDAO : Conti
     val countries= ListBuffer.empty ++= Await.result(countryDAO.getAllCountries(),5.seconds)
     countries.find(_.countryId == countryId) match {
       case Some(value) => {
-        /*val message = CityService.removeCitiesOfCountry(countryId) match {
+        val message = cityService.removeCitiesOfCountry(countryId) match {
           case Some(value) => value
           case None => ""
-        }*/
+        }
         countries.filterInPlace(_.countryId != countryId)
         countryDAO.deleteCountry(countryId)
         Some(s"Country  successfully deleted")
+      }
+      case None => None
+    }
+  }
+
+  override def removeCountriesByContinent(continentId: Int): Option[String] = {
+    val countries= ListBuffer.empty ++= Await.result(countryDAO.getAllCountries(),5.seconds)
+    countries.find(_.continentId == continentId) match {
+      case Some(value) => {
+        val countryIds = countries.filter(_.continentId == continentId).map(_.countryId).toList
+        val message: Option[String] = countryIds match {
+          case ::(head, next) => cityService.removeCitiesOfCountry(countryIds)
+          case Nil => None
+        }
+        countries.filterInPlace(_.continentId != continentId)
+        countryDAO.deleteCountriesByContinent(continentId)
+        message match {
+          case Some(value) => Some("countries and " + value)
+          case None => Some("countries ")
+        }
+
       }
       case None => None
     }

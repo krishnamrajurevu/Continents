@@ -3,15 +3,17 @@ package controllers
 import javax.inject.Inject
 import model.{City, CityRef, ContinentRef, Country, CountryRef}
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, MessagesAbstractController, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesAbstractController, MessagesControllerComponents, Request}
 import service.{CityService, ContinentService, CountryService}
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future}
 
 class ContinentController @Inject()(continentService: ContinentService,countryService : CountryService,cityService : CityService, cc: MessagesControllerComponents)(implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
-
+  def index() = Action { implicit request: Request[AnyContent] =>
+    Ok(views.html.index())
+  }
 
   def getAllContinents = Action.async { implicit  request =>
     continentService.getAllContinents.map{ continents =>
@@ -63,7 +65,7 @@ class ContinentController @Inject()(continentService: ContinentService,countrySe
         country =>{
           countryService.createCountry(country.countryName, country.continentId) match {
             case Some(value) =>Future.successful(Ok(value))
-            case None =>Future.successful(Ok("Country already added"))
+            case None =>Future.successful(Ok("Given data not found"))
           }
         }
     )
@@ -96,10 +98,9 @@ class ContinentController @Inject()(continentService: ContinentService,countrySe
         Future.successful(BadRequest("Some thing went wrong"+error))
       },
       city =>{
-        println("city :"+city)
        cityService.createCity(city.cityName,city.countryId) match {
           case Some(value) =>Future.successful(Ok(value))
-          case None =>Future.successful(Ok("City already added"))
+          case None =>Future.successful(Ok("Given data not found"))
         }
       }
     )

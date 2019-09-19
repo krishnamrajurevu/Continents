@@ -7,10 +7,13 @@ import scala.concurrent.Future
 
 @ImplementedBy(classOf[CountryDAOImpl])
 trait CountryDAO {
+
   def getAllCountries(): Future[Seq[Country]]
 
   def addCountry(country: Country): Future[String]
 
   def deleteCountry(countryId: Int): Future[Int]
+
+  def deleteCountriesByContinent(continentId: Int) :  Future[Int]
 
 }

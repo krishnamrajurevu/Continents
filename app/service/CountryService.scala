@@ -16,6 +16,8 @@ trait CountryService  {
 
   def deleteCountry(countryId: Int) : Option[String]
 
+  def removeCountriesByContinent(continentId: Int): Option[String]
+
   def getContinentByCountry(countryName: String) : Option[String]
 
   def checkCountriesInSameContinent(firstCountry: String, secondCountry: String) :Option[String]
