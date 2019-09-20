@@ -91,8 +91,9 @@ class CountryServiceImpl @Inject()(countryDAO : CountryDAO, continentDAO : Conti
   override def checkCountriesInSameContinent(firstCountry: String, secondCountry: String): Option[String] = {
     val countries= Await.result(countryDAO.getAllCountries(),5.seconds)
     countries.toList.filter(country => country.countryName == firstCountry || country.countryName == secondCountry).map(_.continentId) match {
-      case list => if (list.size == 1) Some(s"One of country $firstCountry or $secondCountry not existed in any continent")
-                   else if (list(0) == list(1)) Some(s"Countries $firstCountry and $secondCountry are in same continent")
+      case list =>  if(list.size == 0)  Some(s"Countries $firstCountry and $secondCountry are not existed in any continent")
+                    else if (list.size == 1) Some(s"One of country $firstCountry or $secondCountry not existed in any continent")
+                    else if (list(0) == list(1)) Some(s"Countries $firstCountry and $secondCountry are in same continent")
                     else Some(s"Countries $firstCountry and $secondCountry are not in same continent")
       case Nil => Some(s"Countries $firstCountry and $secondCountry are not existed in any continent")
     }

@@ -18,7 +18,7 @@ class ContinentDAOImpl  @Inject()(dbConfigProvider: DatabaseConfigProvider)(impl
 
   private class ContinentTable(tag: Tag) extends Table[Continent](tag, "continent") {
 
-    def continentId = column[Int]("continentId", O.PrimaryKey, O.AutoInc)
+    def continentId = column[Int]("continentId", O.PrimaryKey)
 
     def continentName = column[String]("continentName")
 

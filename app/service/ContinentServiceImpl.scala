@@ -15,10 +15,12 @@ class ContinentServiceImpl @Inject()(continentDAO : ContinentDAO,countryService:
   override def addContinent(continentName: String) : Option[Continent]= {
 
     val continents = Await.result(continentDAO.getAllContinents, 5.seconds)
+    println("continents ::"+continents)
     continents.find(_.continentName == continentName) match {
       case Some(_) => None
       case None => val continent = Continent(continents.maxByOption(_.continentId).map(_.continentId + 1).getOrElse(1), continentName)
-        continentDAO.addContinent(continent)
+        val res: Future[String] =continentDAO.addContinent(continent)
+        println("res ::"+res)
         Some(continent)
     }
   }
