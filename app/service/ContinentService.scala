@@ -10,7 +10,7 @@ trait ContinentService {
 
   def getAllContinents: Future[Seq[Continent]]
 
-  def addContinent(continentName: String) : Option[Continent]
+  def addContinent(continentName: String) : Option[String]
 
   def deleteContinent(continentId: Int) : Option[String]
 }

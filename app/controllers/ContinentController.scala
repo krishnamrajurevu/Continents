@@ -29,7 +29,7 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
       continent => {
         if (!Option(continent.continentName.trim).getOrElse("").isEmpty){
           continentService.addContinent(continent.continentName.trim.toUpperCase()) match {
-            case Some(value) =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Continent created successfully","Success"))))
+            case Some(value) =>Future.successful(Ok(Json.toJson(ContinentStrResponse(value,"Success"))))
             case None =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Continent already added","Failed"))))
           }
         }else{
@@ -70,7 +70,7 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
         country =>{
           if (!Option(country.countryName.trim).getOrElse("").isEmpty){
             countryService.createCountry(country.countryName.trim.toUpperCase(), country.continentId) match {
-              case Some(value) =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Add country to continent",value))))
+              case Some(value) =>Future.successful(Ok(Json.toJson(ContinentStrResponse(value,value))))
               case None =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Add country to continent","Given data not found"))))
             }
           }else{
@@ -109,11 +109,11 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
       city =>{
         if (!Option(city.cityName.trim).getOrElse("").isEmpty){
           cityService.createCity(city.cityName.trim.toUpperCase(),city.countryId) match {
-            case Some(value) =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Add city to country","Success"))))
+            case Some(value) =>Future.successful(Ok(Json.toJson(ContinentStrResponse(value,"Success"))))
             case None =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Given data not found","Failed"))))
           }
         }else{
-          Future.successful(Ok(Json.toJson(ContinentStrResponse("Data should ot be empty","Failed"))))
+          Future.successful(Ok(Json.toJson(ContinentStrResponse("Data should not be empty","Failed"))))
         }
       }
     )
@@ -128,7 +128,7 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
 
   def getContinent(countryName: String) = authAction {
     if (!Option(countryName.trim).getOrElse("").isEmpty){
-      countryService.getContinentByCountry(countryName) match {
+      countryService.getContinentByCountry(countryName.trim.toUpperCase()) match {
         case Some(value) =>  Ok(Json.toJson(ContinentStrResponse(s"Continent of $countryName is $value","Success")))
         case None =>  Ok(Json.toJson(ContinentStrResponse(s"Country $countryName is not existed","Failed")))
       }
@@ -177,7 +177,7 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
               result += msg
             }
           }
-          Future.successful(Ok(Json.toJson(CityListResponse("Create multiple cities ","Success",result.toList))))
+          Future.successful(Ok(Json.toJson(CityListResponse("Created multiple cities successfully ","Success",result.toList))))
         }else{
           Future.successful(Ok(Json.toJson(ContinentStrResponse("Data should not be empty","Failed"))))
         }

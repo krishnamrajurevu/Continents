@@ -1,0 +1,37 @@
+<script>
+$("#getContinent").submit(function(event){
+	event.preventDefault();
+	var url = $(this).attr("action");
+	console.log(url)
+	var methodType = $(this).attr("method");
+	console.log(methodType)
+	var data = $(this).serializeFormJSON();
+	console.log(data)
+	$.ajax({
+		url : 'http://localhost:9000/getContinent/'+data.countryName,
+		type: methodType,
+		headers: {
+            'User':'qvantel'
+        }
+	}).done(function(response){
+	    $('#getContinent')[0].reset()
+	    $('#message').text(response.message)
+		console.log(response)
+	});
+});
+
+
+</script>
+
+<div class="row">
+    <div class="col-sm-12">
+        <h3 class="heading-h3">Continent Of Country</h3>
+    </div>
+</div>
+<div class="center_div">
+    <h6 class="heading-h3 success-h6 " id="message"></h6>
+    <form method="get" action="getContinent" id="getContinent">
+        Country Name : <input type="text" name="countryName">
+        <input type="submit" name="submit" value="Get Continent" />
+    </form>
+</div>

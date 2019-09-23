@@ -1,0 +1,100 @@
+<script>
+
+var continentId = localStorage.getItem('continentId');
+var continentName = localStorage.getItem('continentName');
+console.log(continentId+ "  "+continentName)
+function getAllCountries(){
+$('#title').text("List Of Countries In "+continentName)
+$.ajax({
+  type: 'GET',
+  url: 'http://localhost:9000/getCountriesByContinent/'+parseInt(continentId),
+  headers: {
+                   'Content-Type':'application/json',
+                   'User':'qvantel'
+  },
+  dataType: 'json',
+  success: function(data, status, xhr) {
+       var countries=data.countries
+        $('#countryList').empty()
+      if(countries.length==0){
+        $('#message').text("No countries existed in "+continentName)
+      }else{
+        var trHTML = '';
+        $.each(countries, function (i, item) {
+            trHTML += '<tr><td>' + item.countryId + '</td><td>' + item.countryName +
+            '<td> <a href="#" onclick="getCities(\'' + item.countryId + '\' ,\'' + item.countryName + '\' )">Cities</a>'+
+            '</td><td> <a href="#" onclick="addCity(\'' + item.countryId + '\',\'' + item.countryName + '\')">Add</a></td> '+
+            '<td><a href="#" onclick="removeCountry(\'' + item.countryId + '\',\'' + item.countryName + '\' )">Remove</a></td></tr>';
+        });
+        $('#countryList').append(trHTML);
+      }
+  },
+  error: function(xhr, status, response) {
+
+  }
+ });
+}
+
+function addCountry(){
+     localStorage.setItem('continentId', continentId);
+     localStorage.setItem('continentName',continentName);
+     $("#maincont").load("assets/continents/add_country.html");
+}
+
+function getCities(countryId,countryName){
+    localStorage.setItem('countryId', countryId);
+    localStorage.setItem('countryName', countryName);
+    $("#maincont").load("assets/continents/city_list.html");
+}
+
+function addCity(countryId,continentName){
+     localStorage.setItem('countryId', countryId);
+     localStorage.setItem('countryName', countryName);
+    $("#maincont").load("assets/continents/add_city.html");
+}
+
+function removeCountry(countryId,countryName){
+
+    var res = confirm("Do you want to delete Country including cities!");
+    if (res == true) {
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:9000/deleteCountry/'+parseInt(countryId),
+            headers: {
+                   'Content-Type':'application/json',
+                   'User':'qvantel'
+            },
+            dataType: 'json',
+            success: function(data, status, xhr) {
+                getAllCountries()
+            },
+            error: function(xhr, status, response) {
+
+           }
+         });
+    }
+}
+
+
+getAllCountries()
+</script>
+<div class="row">
+    <div class="col-sm-12">
+        <h1 class="heading-h3" id="title"></h1>
+    </div>
+</div>
+<h6 class="heading-h3 success-h6 " id="message"></h6>
+<b class="link-style">Add Country <a href="#" onclick="addCountry()">here</a></b>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Country Id</th>
+        <th>Country Name</th>
+        <th>Get Cities</th>
+        <th>Add City</th>
+        <th>Remove Country</th>
+    </tr>
+    </thead>
+    <tbody id="countryList">
+    </tbody>
+</table>

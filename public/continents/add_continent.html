@@ -1,0 +1,43 @@
+<script>
+ function getAllContinents(){
+     $("#maincont").load("assets/continents/continent_list.html");
+ }
+
+ $("#createContinent").submit(function(event){
+	event.preventDefault();
+	var url = $(this).attr("action");
+	console.log(url)
+	var methodType = $(this).attr("method");
+	console.log(methodType)
+	var data = $(this).serializeFormJSON();
+	console.log(data)
+	$.ajax({
+		url : url,
+		type: methodType,
+		data : JSON.stringify(data),
+		headers: {
+            'Content-Type':'application/json',
+            'User':'qvantel'
+        }
+	}).done(function(response){
+	    $('#createContinent')[0].reset()
+	    $('#message').text(response.message)
+		console.log(response)
+	});
+});
+
+</script>
+<div class="row">
+    <div class="col-sm-12">
+        <h3 class="heading-h3">Add Continent</h3>
+    </div>
+</div>
+<b class="link-style">Get All Continents <a href="#" onclick="getAllContinents()">here</a></b>
+<div class="center_div">
+    <h6 class="heading-h3 success-h6 " id="message"></h6>
+
+    <form method="post" action="createContinent" id="createContinent">
+        Continent Name : <input type="text" name="continentName" />
+        <input type="submit" name="submit" value="Create Continent" />
+    </form>
+</div>

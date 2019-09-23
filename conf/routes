@@ -16,6 +16,7 @@ GET             /getContinents                                              cont
 + nocsrf
 POST            /createContinent                                            controllers.ContinentController.addContinent
 
++ nocsrf
 DELETE          /deleteContinent/:continentId                               controllers.ContinentController.deleteContinent(continentId : Int)
 
 GET             /getCountries                                               controllers.ContinentController.getAllCountries()
@@ -25,6 +26,7 @@ GET             /getCountriesByContinent/:continentId                       cont
 + nocsrf
 POST            /createCountry                                              controllers.ContinentController.addCountryToContinent()
 
++ nocsrf
 DELETE          /deleteCountry/:countryId                                   controllers.ContinentController.deleteCountry(countryId : Int)
 
 GET             /getCities                                                  controllers.ContinentController.getAllCities()
@@ -34,6 +36,7 @@ GET             /getCitiesByCountry/:countryId                              cont
 + nocsrf
 POST            /createCity                                                 controllers.ContinentController.addCityToCountry()
 
++ nocsrf
 DELETE          /deleteCity/:cityId                                         controllers.ContinentController.deleteCity(cityId: Int)
 
 GET             /getContinent/:countryName                                  controllers.ContinentController.getContinent(countryName: String)

@@ -1,0 +1,56 @@
+<script>
+$("#getGroupedCities").submit(function(event){
+	event.preventDefault();
+	var url = $(this).attr("action");
+	console.log(url)
+	var methodType = $(this).attr("method");
+	console.log(methodType)
+	var data = $(this).serializeFormJSON();
+	console.log(data)
+	$.ajax({
+		url : 'http://localhost:9000/getCitiesByGroup/'+data.cityName,
+		type: methodType,
+		headers: {
+            'User':'qvantel'
+        }
+	}).done(function(response){
+	    console.log(response)
+	    $('#getGroupedCities')[0].reset()
+	    $('#groupedCities').empty()
+	    $('#message').text(response.message)
+	    var cities = response.cities
+	    if(cities.length==0){
+
+	    }else{
+	        var trHTML = '';
+            $.each(cities, function (i, city) {
+            trHTML += '<li>' + city + '</li>'
+        });
+        $('#groupedCities').append(trHTML);
+	    }
+
+	});
+});
+
+
+
+</script>
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <h3 class="heading-h3">Grouped Cities</h3>
+    </div>
+</div>
+<div class="center_div">
+    <h6 class="heading-h3 success-h6 " id="message"></h6>
+
+    <ul id="groupedCities">
+
+    </ul>
+
+    <form method="get" action="getGroupedCities" id="getGroupedCities">
+        Enter Character : <input type="text" name="cityName" maxlength="1"/>
+        <input type="submit">
+    </form>
+</div>

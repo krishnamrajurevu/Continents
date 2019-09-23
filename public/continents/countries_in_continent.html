@@ -1,0 +1,36 @@
+<script>
+$("#countriesLieInContinent").submit(function(event){
+	event.preventDefault();
+	var url = $(this).attr("action");
+	console.log(url)
+	var methodType = $(this).attr("method");
+	console.log(methodType)
+	var data = $(this).serializeFormJSON();
+	console.log(data)
+	$.ajax({
+		url : 'http://localhost:9000/countriesLieInContinent/'+data.firstCountry+'/'+data.secondCountry,
+		type: methodType,
+		headers: {
+            'User':'qvantel'
+        }
+	}).done(function(response){
+	    console.log(response)
+	    $('#countriesLieInContinent')[0].reset()
+	    $('#message').text(response.message)
+	});
+});
+</script>
+
+<div class="row">
+    <div class="col-sm-12">
+        <h1 class="heading-h3">Check Countries Lies In Continent</h1>
+    </div>
+</div>
+<h6 class="heading-h3 success-h6 " id="message"></h6>
+<div class="center_div">
+    <form method="get" action="countriesLieInContinent" id="countriesLieInContinent">
+        First Country : <input type="text" name="firstCountry"/><br/>
+        Second Country : <input type="text" name="secondCountry"/>
+        <input type="submit" name="submit" value="Check" />
+    </form>
+</div>

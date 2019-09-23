@@ -1,0 +1,52 @@
+<script>
+$("#getCities").submit(function(event){
+	event.preventDefault();
+	var url = $(this).attr("action");
+	console.log(url)
+	var methodType = $(this).attr("method");
+	console.log(methodType)
+	var data = $(this).serializeFormJSON();
+	console.log(data)
+	$.ajax({
+		url : 'http://localhost:9000/getCities/'+data.continentName,
+		type: methodType,
+		headers: {
+            'User':'qvantel'
+        }
+	}).done(function(response){
+	    console.log(response)
+	    $('#getCities')[0].reset()
+	    $('#citiesList').empty()
+	    $('#message').text(response.message)
+	    var cities = response.cities
+	    if(cities.length==0){
+
+	    }else{
+	        var trHTML = '';
+            $.each(cities, function (i, city) {
+            trHTML += '<li>' + city + '</li>'
+        });
+        $('#citiesList').append(trHTML);
+	    }
+
+	});
+});
+
+
+</script>
+
+<div class="row">
+    <div class="col-sm-12">
+        <h3 class="heading-h3">Cities of Continent</h3>
+    </div>
+</div>
+<h6 class="heading-h3 " id="message"></h6>
+<div class="text-center">
+    <ul  id="citiesList"></ul>
+</div>
+<div class="center_div">
+    <form method="get" action="getCities" id="getCities">
+        Continent Name : <input type="text" name="continentName">
+        <input type="submit" name="submit" value="Get Cities" />
+    </form>
+</div>

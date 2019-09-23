@@ -1,0 +1,52 @@
+<script>
+
+ var continentId=localStorage.getItem('continentId');
+ var continentName=localStorage.getItem('continentName');
+ console.log(continentId+"  "+continentName)
+ $('#title').text("Add country to "+continentName)
+ $('#continentId').val(continentId)
+ function getAllCountries(){
+     $("#maincont").load("assets/continents/country_list.html");
+ }
+
+ $("#createCountry").submit(function(event){
+	event.preventDefault();
+	var url = $(this).attr("action");
+	console.log(url)
+	var methodType = $(this).attr("method");
+	console.log(methodType)
+	var data = $(this).serializeFormJSON();
+	data.continentId = parseInt(data.continentId)
+	console.log(data)
+	$.ajax({
+		url : url,
+		type: methodType,
+		data : JSON.stringify(data),
+		headers: {
+            'Content-Type':'application/json',
+            'User':'qvantel'
+        }
+	}).done(function(response){
+	    $('#createCountry')[0].reset()
+	    $('#message').text(response.message)
+		console.log(response)
+	});
+});
+
+</script>
+
+<div class="row">
+    <div class="col-sm-12">
+        <h3 class="heading-h3" id="title"></h3>
+    </div>
+</div>
+<b class="link-style">Get All Countries <a href="#" onclick="getAllCountries()">here</a></b>
+<div class="center_div">
+    <h6 class="heading-h3 success-h6 " id="message"></h6>
+
+    <form method="post" action="createCountry" id="createCountry">
+        Country Name : <input type="text" name="countryName" />
+        <input type="hidden" name="continentId" id="continentId">
+        <input type="submit" name="submit" value="Create Country" />
+    </form>
+</div>

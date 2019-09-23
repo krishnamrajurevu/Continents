@@ -1,0 +1,85 @@
+<script>
+function getAllCountries(){
+$.ajax({
+  type: 'GET',
+  url: 'http://localhost:9000/getCountries',
+  headers: {
+        'Content-Type':'application/json',
+        'User':'qvantel'
+  },
+  dataType: 'json',
+  success: function(data, status, xhr) {
+       var countries=data.countries
+        $('#countryId').empty()
+      if(countries.length==0){
+        $('#message').text("No countries existed ")
+      }else{
+        var trHTML = '';
+        $.each(countries, function (i, item) {
+            trHTML +=  '<option value='+item.countryId+'>'+item.countryName+'</option>'
+        });
+        $('#countryId').append(trHTML);
+      }
+  },
+  error: function(xhr, status, response) {
+
+  }
+ });
+}
+
+
+ $("#createMultipleCities").submit(function(event){
+	event.preventDefault();
+	var url = $(this).attr("action");
+	console.log(url)
+	var methodType = $(this).attr("method");
+	console.log(methodType)
+	var data = $(this).serializeFormJSON();
+	data.countryId = parseInt(data.countryId)
+	console.log(data)
+	$.ajax({
+		url : url,
+		type: methodType,
+		data : JSON.stringify(data),
+		headers: {
+            'Content-Type':'application/json',
+            'User':'qvantel'
+        }
+	}).done(function(response){
+	    $('#createMultipleCities')[0].reset()
+	    $('#message').text(response.message)
+	    $('#messageList').empty()
+	    var msgList=response.cities
+	     var trHTML = '';
+        $.each(msgList, function (i, msg) {
+            trHTML +=  '<li>'+msg+'</li>'
+        });
+        $('#messageList').append(trHTML);
+
+		console.log(response)
+	});
+});
+getAllCountries()
+</script>
+
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <h3 class="heading-h3">Create Multiple Cities</h3>
+    </div>
+</div>
+
+<h6 class="heading-h3 success-h6 " id="message"></h6>
+<div><ul id="messageList"></ul></div>
+
+<div class="center_div">
+
+
+    <form method="post" action="createMultipleCities" id="createMultipleCities">
+
+        Select Country : <select name="countryId" id="countryId"></select><br>
+        Cities Names : <input type="text" name="cityName">
+        <input type="submit">
+    </form>
+</div>

@@ -1,0 +1,98 @@
+<script type="text/javascript">
+
+function getAllContinents(){
+$.ajax({
+  type: 'GET',
+  url: 'http://localhost:9000/getContinents',
+  headers: {
+                   'Content-Type':'application/json',
+                   'User':'qvantel'
+  },
+  dataType: 'json',
+  success: function(data, status, xhr) {
+      $('#continentList').empty()
+      var continents=data.continent
+      if(continents.length==0){
+      $('#message').text("No continents existed in world")
+      }else{
+      var trHTML = '';
+      $.each(continents, function (i, item) {
+        trHTML += '<tr><td>' + item.continentId + '</td><td>' + item.continentName +
+        '<td> <a href="#" onclick="getCountries(\'' + item.continentId + '\' , \'' + item.continentName + '\')">Countries</a>'+
+        '</td><td> <a href="#" onclick="addCountry(\'' + item.continentId + '\' , \'' + item.continentName + '\')">Add</a></td> '+
+        '<td><a href="#" onclick="removeContinent(\'' + item.continentId + '\' , \'' + item.continentName + '\' )">Remove</a></td></tr>';
+      });
+      $('#continentList').append(trHTML);
+      }
+  },
+  error: function(xhr, status, response) {
+
+  }
+ });
+}
+
+function addContinent(){
+    $("#maincont").load("assets/continents/add_continent.html");
+}
+function getCountries(continentId,continentName){
+        localStorage.setItem('continentId', continentId);
+        localStorage.setItem('continentName', continentName);
+       $("#maincont").load("assets/continents/country_list.html");
+}
+
+function addCountry(continentId,continentName){
+     localStorage.setItem('continentId', continentId);
+     localStorage.setItem('continentName', continentName);
+    $("#maincont").load("assets/continents/add_country.html");
+}
+
+function removeContinent(continentId,continentName){
+
+    var res = confirm("Do you want to delete Continent including countries and cities!");
+    if (res == true) {
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:9000/deleteContinent/'+parseInt(continentId),
+            headers: {
+                   'Content-Type':'application/json',
+                   'User':'qvantel'
+            },
+            dataType: 'json',
+            success: function(data, status, xhr) {
+                getAllContinents()
+            },
+            error: function(xhr, status, response) {
+
+           }
+         });
+    }
+}
+
+getAllContinents()
+
+</script>
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <h1 class="heading-h3">List of continents in world</h1>
+    </div>
+</div>
+
+<b class="link-style"> Do you want add continents <a href="#" onclick="addContinent()">here</a></b>
+<h6 class="heading-h3 success-h6 " id="message"></h6>
+
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Continent Id </th>
+        <th>Continent Name</th>
+        <th>Get Countries</th>
+        <th>Add Country</th>
+        <th>Remove Continent</th>
+    </tr>
+    </thead>
+    <tbody id="continentList">
+    </tbody>
+</table>

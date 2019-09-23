@@ -1,0 +1,84 @@
+<script>
+
+var countryId = localStorage.getItem('countryId');
+var countryName = localStorage.getItem('countryName');
+console.log(countryId+ "  "+countryName)
+function getAllCities(){
+$('#title').text("List Of Cities In "+countryName)
+$.ajax({
+  type: 'GET',
+  url: 'http://localhost:9000/getCitiesByCountry/'+parseInt(countryId),
+  headers: {
+                   'Content-Type':'application/json',
+                   'User':'qvantel'
+  },
+  dataType: 'json',
+  success: function(data, status, xhr) {
+       var cities=data.cities
+       console.log(cities)
+       $('#cityList').empty()
+      if(cities.length==0){
+        $('#message').text("No cities existed in "+countryName)
+      }else{
+        var trHTML = '';
+        $.each(cities, function (i, item) {
+            trHTML += '<tr><td>' + item.cityId + '</td><td>' + item.cityName +
+            '<td><a href="#" onclick="removeCity(\'' + item.cityId + '\',\'' + item.cityName + '\' )">Remove</a></td></tr>';
+        });
+        $('#cityList').append(trHTML);
+      }
+  },
+  error: function(xhr, status, response) {
+
+  }
+ });
+}
+
+function addCity(){
+     localStorage.setItem('countryId', countryId);
+     localStorage.setItem('countryName',countryName);
+     $("#maincont").load("assets/continents/add_city.html");
+}
+function removeCity(cityId,cityName){
+
+    var res = confirm("Do you want to delete City!");
+    if (res == true) {
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:9000/deleteCity/'+parseInt(cityId),
+            headers: {
+                   'Content-Type':'application/json',
+                   'User':'qvantel'
+            },
+            dataType: 'json',
+            success: function(data, status, xhr) {
+                getAllCities()
+            },
+            error: function(xhr, status, response) {
+
+           }
+         });
+    }
+}
+
+
+getAllCities()
+</script>
+<div class="row">
+    <div class="col-sm-12">
+        <h1 class="heading-h3" id="title"></h1>
+    </div>
+</div>
+<h6 class="heading-h3 success-h6 " id="message"></h6>
+<b class="link-style">Add City <a href="#" onclick="addCity()">here</a></b>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>City Id</th>
+        <th>City Name</th>
+        <th>Delete City</th>
+    </tr>
+    </thead>
+    <tbody id="cityList">
+    </tbody>
+</table>
