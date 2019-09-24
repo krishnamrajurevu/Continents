@@ -56,25 +56,6 @@ class CityServiceImpl @Inject()(cityDAO : CityDAO,countryService: CountryService
     cities.map(_.cityName).groupBy(_.charAt(0))
   }
 
-  override def removeCitiesOfCountry(countryIds: List[Int]): Option[String] = {
-    val cities = ListBuffer.empty++= Await.result(cityDAO.getAllCities(),5.seconds)
-    cities.find(city => countryIds.contains(city.countryId)) match {
-      case Some(value) => cities.filterInPlace(city => !countryIds.contains(city.countryId))
-        cityDAO.deleteCitiesByCountry(countryIds)
-        Some("cities")
-      case None => None
-    }
-  }
-
-  override def removeCitiesOfCountry(countryId: Int): Option[String] = {
-    val cities = ListBuffer.empty++= Await.result(cityDAO.getAllCities(),5.seconds)
-    cities.find(_.countryId == countryId) match {
-      case Some(value) => cities.filterInPlace(_.countryId != countryId)
-        cityDAO.deleteCitiesByCountry(countryId)
-        Some(" and cities of country ")
-      case None => None
-    }
-  }
 
   override def deleteCity(cityId: Int): Option[String] = {
     val cities = ListBuffer.empty ++=  Await.result(cityDAO.getAllCities(),5.seconds)

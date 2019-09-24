@@ -8,7 +8,7 @@ import scala.collection.mutable.ListBuffer
 import scala.concurrent._
 import scala.concurrent.duration._
 
-class CountryServiceImpl @Inject()(countryDAO : CountryDAO, continentDAO : ContinentDAO,cityService: CityService) extends CountryService {
+class CountryServiceImpl @Inject()(countryDAO : CountryDAO, continentDAO : ContinentDAO,utilServiceImpl: UtilServiceImpl) extends CountryService {
 
 
   override def getAllCountries(): Future[Seq[Country]] = {
@@ -43,7 +43,7 @@ class CountryServiceImpl @Inject()(countryDAO : CountryDAO, continentDAO : Conti
     val countries= ListBuffer.empty ++= Await.result(countryDAO.getAllCountries(),5.seconds)
     countries.find(_.countryId == countryId) match {
       case Some(value) => {
-        val message = cityService.removeCitiesOfCountry(countryId) match {
+        val message = utilServiceImpl.removeCitiesOfCountry(countryId) match {
           case Some(value) => value
           case None => ""
         }
@@ -61,7 +61,7 @@ class CountryServiceImpl @Inject()(countryDAO : CountryDAO, continentDAO : Conti
       case Some(value) => {
         val countryIds = countries.filter(_.continentId == continentId).map(_.countryId).toList
         val message: Option[String] = countryIds match {
-          case ::(head, next) => cityService.removeCitiesOfCountry(countryIds)
+          case ::(head, next) => utilServiceImpl.removeCitiesOfCountry(countryIds)
           case Nil => None
         }
         countries.filterInPlace(_.continentId != continentId)
@@ -92,7 +92,7 @@ class CountryServiceImpl @Inject()(countryDAO : CountryDAO, continentDAO : Conti
     val countries= Await.result(countryDAO.getAllCountries(),5.seconds)
     countries.toList.filter(country => country.countryName == firstCountry || country.countryName == secondCountry).map(_.continentId) match {
       case list =>  if(list.size == 0)  Some(s"Countries $firstCountry and $secondCountry are not existed in any continent")
-                    else if (list.size == 1) Some(s"One of country $firstCountry or $secondCountry not existed in any continent")
+                    else if (list.size == 1) Some(s"Either country $firstCountry or $secondCountry not existed in any continent")
                     else if (list(0) == list(1)) Some(s"Countries $firstCountry and $secondCountry are in same continent")
                     else Some(s"Countries $firstCountry and $secondCountry are not in same continent")
       case Nil => Some(s"Countries $firstCountry and $secondCountry are not existed in any continent")

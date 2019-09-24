@@ -33,7 +33,7 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
             case None =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Continent already added","Failed"))))
           }
         }else{
-          Future.successful(Ok(Json.toJson(ContinentStrResponse("Continent name should not be empty","Failed"))))
+          Future.successful(BadRequest(Json.toJson(ContinentStrResponse("Continent name should not be empty","Failed"))))
         }
 
       }
@@ -43,7 +43,7 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
   def deleteContinent(continentId : Int) = authAction.async { implicit request =>
     continentService.deleteContinent(continentId) match {
       case Some(value) =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Continent deleted successfully","Success"))))
-      case None =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Continent id not found","Failed"))))
+      case None =>Future.successful(NotFound(Json.toJson(ContinentStrResponse("Continent id not found","Failed"))))
     }
   }
 
@@ -71,10 +71,10 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
           if (!Option(country.countryName.trim).getOrElse("").isEmpty){
             countryService.createCountry(country.countryName.trim.toUpperCase(), country.continentId) match {
               case Some(value) =>Future.successful(Ok(Json.toJson(ContinentStrResponse(value,value))))
-              case None =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Add country to continent","Given data not found"))))
+              case None =>Future.successful(NotFound(Json.toJson(ContinentStrResponse("Add country to continent","Given data not found"))))
             }
           }else{
-            Future.successful(Ok(Json.toJson(ContinentStrResponse("Add country to continent","Data should not be empty"))))
+            Future.successful(BadRequest(Json.toJson(ContinentStrResponse("Add country to continent","Data should not be empty"))))
           }
         }
     )
@@ -83,7 +83,7 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
   def deleteCountry(countryId : Int) = authAction.async { implicit request =>
     countryService.deleteCountry(countryId) match {
       case Some(value) =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Delete country successfully ","Success"))))
-      case None =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Given data not found","Failed"))))
+      case None =>Future.successful(NotFound(Json.toJson(ContinentStrResponse("Given data not found","Failed"))))
     }
   }
 
@@ -110,10 +110,10 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
         if (!Option(city.cityName.trim).getOrElse("").isEmpty){
           cityService.createCity(city.cityName.trim.toUpperCase(),city.countryId) match {
             case Some(value) =>Future.successful(Ok(Json.toJson(ContinentStrResponse(value,"Success"))))
-            case None =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Given data not found","Failed"))))
+            case None =>Future.successful(NotFound(Json.toJson(ContinentStrResponse("Given data not found","Failed"))))
           }
         }else{
-          Future.successful(Ok(Json.toJson(ContinentStrResponse("Data should not be empty","Failed"))))
+          Future.successful(BadRequest(Json.toJson(ContinentStrResponse("Data should not be empty","Failed"))))
         }
       }
     )
@@ -122,7 +122,7 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
   def deleteCity(cityId : Int) = authAction.async { implicit request =>
     cityService.deleteCity(cityId) match {
       case Some(value) =>Future.successful(Ok(Json.toJson(ContinentStrResponse("City deleted successfully","Success"))))
-      case None =>Future.successful(Ok(Json.toJson(ContinentStrResponse("Given data not found","Failed"))))
+      case None =>Future.successful(NotFound(Json.toJson(ContinentStrResponse("Given data not found","Failed"))))
     }
   }
 
@@ -130,31 +130,31 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
     if (!Option(countryName.trim).getOrElse("").isEmpty){
       countryService.getContinentByCountry(countryName.trim.toUpperCase()) match {
         case Some(value) =>  Ok(Json.toJson(ContinentStrResponse(s"Continent of $countryName is $value","Success")))
-        case None =>  Ok(Json.toJson(ContinentStrResponse(s"Country $countryName is not existed","Failed")))
+        case None =>  NotFound(Json.toJson(ContinentStrResponse(s"Country $countryName is not existed","Failed")))
       }
     }else{
-      Ok(Json.toJson(ContinentStrResponse("Data should not be empty","Failed")))
+      BadRequest(Json.toJson(ContinentStrResponse("Data should not be empty","Failed")))
     }
 
   }
 
   def getAllCitiesByContinent(continentName: String) = authAction {
     if (!Option(continentName.trim).getOrElse("").isEmpty){
-      val cities = cityService.getAllCitiesByContinent(continentName) match {
+      val cities = cityService.getAllCitiesByContinent(continentName.trim.toUpperCase()) match {
         case Some(value) => value
         case None => List[String]().empty
       }
       Ok(Json.toJson(CityListResponse("Get all cities of continent","Success",cities)))
     }else{
-      Ok(Json.toJson(ContinentStrResponse("Data should not be empty","Failed")))
+      BadRequest(Json.toJson(ContinentStrResponse("Data should not be empty","Failed")))
     }
 
   }
 
   def countriesLieInContinent(firstCountry: String, secondCountry: String) = authAction {
-    countryService.checkCountriesInSameContinent(firstCountry.toUpperCase(), secondCountry.toUpperCase()) match {
+    countryService.checkCountriesInSameContinent(firstCountry.trim.toUpperCase(), secondCountry.trim.toUpperCase()) match {
       case Some(value) =>  Ok(Json.toJson(ContinentStrResponse(value,"Success")))
-      case None =>Ok(Json.toJson(ContinentStrResponse("Some thing went wrong","Failed")))
+      case None =>BadRequest(Json.toJson(ContinentStrResponse("Some thing went wrong","Failed")))
     }
   }
 
@@ -179,7 +179,7 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
           }
           Future.successful(Ok(Json.toJson(CityListResponse("Created multiple cities successfully ","Success",result.toList))))
         }else{
-          Future.successful(Ok(Json.toJson(ContinentStrResponse("Data should not be empty","Failed"))))
+          Future.successful(BadRequest(Json.toJson(ContinentStrResponse("Data should not be empty","Failed"))))
         }
 
       }
@@ -188,7 +188,7 @@ class ContinentController @Inject()(authAction: AuthenticatedUserAction,continen
 
   def getGroupedCities(cityFirstChar: Char) = authAction {
     val groupCities: Map[Char, Seq[String]] = cityService.getCitiesByGroup()
-    val cities = groupCities.get(cityFirstChar)
+    val cities = groupCities.get(cityFirstChar.toUpper)
     val listOfCities = cities match {
       case Some(cities) => cities.toList
       case None => List[String]().empty
