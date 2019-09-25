@@ -2,21 +2,19 @@
 $("#getContinent").submit(function(event){
 	event.preventDefault();
 	var url = $(this).attr("action");
-	console.log(url)
 	var methodType = $(this).attr("method");
-	console.log(methodType)
 	var data = $(this).serializeFormJSON();
-	console.log(data)
 	$.ajax({
 		url : 'http://localhost:9000/getContinent/'+data.countryName,
 		type: methodType,
 		headers: {
-            'User':'qvantel'
+            'admin':'qvantel'
         }
 	}).done(function(response){
 	    $('#getContinent')[0].reset()
 	    $('#message').text(response.message)
-		console.log(response)
+	}).fail(function(xhr, status, response) {
+         $('#message').text(response+" : "+xhr.responseText)
 	});
 });
 

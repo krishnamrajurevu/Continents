@@ -5,28 +5,28 @@ $.ajax({
   type: 'GET',
   url: 'http://localhost:9000/getContinents',
   headers: {
-                   'Content-Type':'application/json',
-                   'User':'qvantel'
+    'Content-Type':'application/json',
+    'admin':'qvantel'
   },
   dataType: 'json',
   success: function(data, status, xhr) {
       $('#continentList').empty()
       var continents=data.continent
       if(continents.length==0){
-      $('#message').text("No continents existed in world")
+          $('#message').text("No continents existed in world")
       }else{
-      var trHTML = '';
-      $.each(continents, function (i, item) {
-        trHTML += '<tr><td>' + item.continentId + '</td><td>' + item.continentName +
-        '<td> <a href="#" onclick="getCountries(\'' + item.continentId + '\' , \'' + item.continentName + '\')">Countries</a>'+
-        '</td><td> <a href="#" onclick="addCountry(\'' + item.continentId + '\' , \'' + item.continentName + '\')">Add</a></td> '+
-        '<td><a href="#" onclick="removeContinent(\'' + item.continentId + '\' , \'' + item.continentName + '\' )">Remove</a></td></tr>';
-      });
-      $('#continentList').append(trHTML);
+          var trHTML = '';
+          $.each(continents, function (i, item) {
+            trHTML += '<tr><td>' + item.continentId + '</td><td>' + item.continentName +
+            '<td> <a href="#" onclick="getCountries(\'' + item.continentId + '\' , \'' + item.continentName + '\')">Countries</a>'+
+            '</td><td> <a href="#" onclick="addCountry(\'' + item.continentId + '\' , \'' + item.continentName + '\')">Add</a></td> '+
+            '<td><a href="#" onclick="removeContinent(\'' + item.continentId + '\' , \'' + item.continentName + '\' )">Remove</a></td></tr>';
+          });
+          $('#continentList').append(trHTML);
       }
   },
   error: function(xhr, status, response) {
-
+         $('#message').text(response+" : "+xhr.responseText)
   }
  });
 }
@@ -55,14 +55,14 @@ function removeContinent(continentId,continentName){
             url: 'http://localhost:9000/deleteContinent/'+parseInt(continentId),
             headers: {
                    'Content-Type':'application/json',
-                   'User':'qvantel'
+                   'admin':'qvantel'
             },
             dataType: 'json',
             success: function(data, status, xhr) {
                 getAllContinents()
             },
             error: function(xhr, status, response) {
-
+               $('#message').text(response+" : "+xhr.responseText)
            }
          });
     }

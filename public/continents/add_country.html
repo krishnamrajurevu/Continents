@@ -2,7 +2,6 @@
 
  var continentId=localStorage.getItem('continentId');
  var continentName=localStorage.getItem('continentName');
- console.log(continentId+"  "+continentName)
  $('#title').text("Add country to "+continentName)
  $('#continentId').val(continentId)
  function getAllCountries(){
@@ -12,24 +11,22 @@
  $("#createCountry").submit(function(event){
 	event.preventDefault();
 	var url = $(this).attr("action");
-	console.log(url)
 	var methodType = $(this).attr("method");
-	console.log(methodType)
 	var data = $(this).serializeFormJSON();
 	data.continentId = parseInt(data.continentId)
-	console.log(data)
 	$.ajax({
 		url : url,
 		type: methodType,
 		data : JSON.stringify(data),
 		headers: {
             'Content-Type':'application/json',
-            'User':'qvantel'
+            'admin':'qvantel'
         }
 	}).done(function(response){
 	    $('#createCountry')[0].reset()
 	    $('#message').text(response.message)
-		console.log(response)
+	}).fail(function(xhr, status, response) {
+         $('#message').text(response+" : "+xhr.responseText)
 	});
 });
 

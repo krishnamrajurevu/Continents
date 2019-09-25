@@ -2,20 +2,19 @@
 
 var continentId = localStorage.getItem('continentId');
 var continentName = localStorage.getItem('continentName');
-console.log(continentId+ "  "+continentName)
 function getAllCountries(){
 $('#title').text("List Of Countries In "+continentName)
 $.ajax({
   type: 'GET',
   url: 'http://localhost:9000/getCountriesByContinent/'+parseInt(continentId),
   headers: {
-                   'Content-Type':'application/json',
-                   'User':'qvantel'
+    'Content-Type':'application/json',
+    'admin':'qvantel'
   },
   dataType: 'json',
   success: function(data, status, xhr) {
-       var countries=data.countries
-        $('#countryList').empty()
+      var countries=data.countries
+      $('#countryList').empty()
       if(countries.length==0){
         $('#message').text("No countries existed in "+continentName)
       }else{
@@ -30,7 +29,7 @@ $.ajax({
       }
   },
   error: function(xhr, status, response) {
-
+     $('#message').text(response+" : "+xhr.responseText)
   }
  });
 }
@@ -61,15 +60,15 @@ function removeCountry(countryId,countryName){
             type: 'DELETE',
             url: 'http://localhost:9000/deleteCountry/'+parseInt(countryId),
             headers: {
-                   'Content-Type':'application/json',
-                   'User':'qvantel'
+                'Content-Type':'application/json',
+                'admin':'qvantel'
             },
             dataType: 'json',
             success: function(data, status, xhr) {
                 getAllCountries()
             },
             error: function(xhr, status, response) {
-
+                 $('#message').text(response+" : "+xhr.responseText)
            }
          });
     }

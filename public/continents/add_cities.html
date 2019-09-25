@@ -4,13 +4,13 @@ $.ajax({
   type: 'GET',
   url: 'http://localhost:9000/getCountries',
   headers: {
-        'Content-Type':'application/json',
-        'User':'qvantel'
+    'Content-Type':'application/json',
+    'admin':'qvantel'
   },
   dataType: 'json',
   success: function(data, status, xhr) {
-       var countries=data.countries
-        $('#countryId').empty()
+      var countries=data.countries
+      $('#countryId').empty()
       if(countries.length==0){
         $('#message').text("No countries existed ")
       }else{
@@ -22,7 +22,7 @@ $.ajax({
       }
   },
   error: function(xhr, status, response) {
-
+    $('#message').text(response+" : "+xhr.responseText)
   }
  });
 }
@@ -31,32 +31,29 @@ $.ajax({
  $("#createMultipleCities").submit(function(event){
 	event.preventDefault();
 	var url = $(this).attr("action");
-	console.log(url)
 	var methodType = $(this).attr("method");
-	console.log(methodType)
 	var data = $(this).serializeFormJSON();
 	data.countryId = parseInt(data.countryId)
-	console.log(data)
 	$.ajax({
 		url : url,
 		type: methodType,
 		data : JSON.stringify(data),
 		headers: {
             'Content-Type':'application/json',
-            'User':'qvantel'
+            'admin':'qvantel'
         }
 	}).done(function(response){
 	    $('#createMultipleCities')[0].reset()
 	    $('#message').text(response.message)
 	    $('#messageList').empty()
 	    var msgList=response.cities
-	     var trHTML = '';
+	    var trHTML = '';
         $.each(msgList, function (i, msg) {
             trHTML +=  '<li>'+msg+'</li>'
         });
         $('#messageList').append(trHTML);
-
-		console.log(response)
+	}).fail(function(xhr, status, response) {
+         $('#message').text(response+" : "+xhr.responseText)
 	});
 });
 getAllCountries()

@@ -2,20 +2,18 @@
 
 var countryId = localStorage.getItem('countryId');
 var countryName = localStorage.getItem('countryName');
-console.log(countryId+ "  "+countryName)
 function getAllCities(){
 $('#title').text("List Of Cities In "+countryName)
 $.ajax({
   type: 'GET',
   url: 'http://localhost:9000/getCitiesByCountry/'+parseInt(countryId),
   headers: {
-                   'Content-Type':'application/json',
-                   'User':'qvantel'
+    'Content-Type':'application/json',
+    'admin':'qvantel'
   },
   dataType: 'json',
   success: function(data, status, xhr) {
        var cities=data.cities
-       console.log(cities)
        $('#cityList').empty()
       if(cities.length==0){
         $('#message').text("No cities existed in "+countryName)
@@ -29,7 +27,7 @@ $.ajax({
       }
   },
   error: function(xhr, status, response) {
-
+    $('#message').text(response+" : "+xhr.responseText)
   }
  });
 }
@@ -47,15 +45,15 @@ function removeCity(cityId,cityName){
             type: 'DELETE',
             url: 'http://localhost:9000/deleteCity/'+parseInt(cityId),
             headers: {
-                   'Content-Type':'application/json',
-                   'User':'qvantel'
+                'Content-Type':'application/json',
+                 'admin':'qvantel'
             },
             dataType: 'json',
             success: function(data, status, xhr) {
                 getAllCities()
             },
             error: function(xhr, status, response) {
-
+                $('#message').text(response+" : "+xhr.responseText)
            }
          });
     }

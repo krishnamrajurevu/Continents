@@ -2,7 +2,6 @@
 
  var countryId=localStorage.getItem('countryId');
  var countryName=localStorage.getItem('countryName');
- console.log(countryId+"  "+countryName)
  $('#title').text("Add city to "+countryName)
  $('#countryId').val(countryId)
  function getAllCities(){
@@ -12,24 +11,22 @@
  $("#createCity").submit(function(event){
 	event.preventDefault();
 	var url = $(this).attr("action");
-	console.log(url)
 	var methodType = $(this).attr("method");
-	console.log(methodType)
 	var data = $(this).serializeFormJSON();
 	data.countryId = parseInt(data.countryId)
-	console.log(data)
 	$.ajax({
 		url : url,
 		type: methodType,
 		data : JSON.stringify(data),
 		headers: {
             'Content-Type':'application/json',
-            'User':'qvantel'
+            'admin':'qvantel'
         }
 	}).done(function(response){
 	    $('#createCity')[0].reset()
 	    $('#message').text(response.message)
-		console.log(response)
+	}).fail(function(xhr, status, response) {
+         $('#message').text(response+" : "+xhr.responseText)
 	});
 });
 

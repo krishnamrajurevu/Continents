@@ -11,7 +11,7 @@ $("#getGroupedCities").submit(function(event){
 		url : 'http://localhost:9000/getCitiesByGroup/'+data.cityName,
 		type: methodType,
 		headers: {
-            'User':'qvantel'
+            'admin':'qvantel'
         }
 	}).done(function(response){
 	    console.log(response)
@@ -19,16 +19,15 @@ $("#getGroupedCities").submit(function(event){
 	    $('#groupedCities').empty()
 	    $('#message').text(response.message)
 	    var cities = response.cities
-	    if(cities.length==0){
-
-	    }else{
+	    if(cities.length>0){
 	        var trHTML = '';
             $.each(cities, function (i, city) {
-            trHTML += '<li>' + city + '</li>'
-        });
-        $('#groupedCities').append(trHTML);
+                trHTML += '<li>' + city + '</li>'
+            });
+            $('#groupedCities').append(trHTML);
 	    }
-
+	}).fail(function(xhr, status, response) {
+         $('#message').text(response+" : "+xhr.responseText)
 	});
 });
 

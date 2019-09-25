@@ -2,33 +2,28 @@
 $("#getCities").submit(function(event){
 	event.preventDefault();
 	var url = $(this).attr("action");
-	console.log(url)
 	var methodType = $(this).attr("method");
-	console.log(methodType)
 	var data = $(this).serializeFormJSON();
-	console.log(data)
 	$.ajax({
 		url : 'http://localhost:9000/getCities/'+data.continentName,
 		type: methodType,
 		headers: {
-            'User':'qvantel'
+            'admin':'qvantel'
         }
 	}).done(function(response){
-	    console.log(response)
 	    $('#getCities')[0].reset()
 	    $('#citiesList').empty()
 	    $('#message').text(response.message)
 	    var cities = response.cities
-	    if(cities.length==0){
-
-	    }else{
+	    if(cities.length>0){
 	        var trHTML = '';
             $.each(cities, function (i, city) {
-            trHTML += '<li>' + city + '</li>'
-        });
+                trHTML += '<li>' + city + '</li>'
+            });
         $('#citiesList').append(trHTML);
 	    }
-
+	}).fail(function(xhr, status, response) {
+         $('#message').text(response+" : "+xhr.responseText)
 	});
 });
 
